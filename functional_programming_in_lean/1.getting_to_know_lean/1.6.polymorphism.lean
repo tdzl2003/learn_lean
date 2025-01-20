@@ -45,7 +45,7 @@ def MyList.length (α : Type) (xs : MyList α) : Nat :=
 -- 这个却可以自动推导？
 #eval explicitPrimesUnder10.length _
 
--- 书教错了，写法改了，类型参数不用写了
+-- 书教错了，写法改了，泛型参数用 {} 在下一章讲了
 
 def replaceY (point : PPoint α) (newY : α) : PPoint α :=
   { point with y := newY }
@@ -82,3 +82,39 @@ def swap(pair : α × β) : β × α :=
 
 #eval swap ({fst:= 1, snd:= 2 : Prod Nat Nat})
 #eval swap (1,2)
+
+
+inductive PetName : Type where
+  | inl (val : String) : PetName
+  | inr (val : String) : PetName
+
+def animals : List PetName :=
+  [PetName.inl "Spot", PetName.inr "Tiger", PetName.inl "Fifi", PetName.inl "Rex", PetName.inr "Floof"]
+
+def zip {α β : Type} (xs : List α) (ys : List β) : List (α × β) :=
+  match xs with
+  | List.nil => List.nil
+  | x::xs => match ys with
+    | List.nil => List.nil
+    | y::ys => (x,y)::(zip xs ys)
+
+#eval zip [1,2,3] [4,5,6,7,8]
+
+def take {α: Type} (list: List α) (n: Nat): List α :=
+  match n with
+    | 0 => List.nil
+    | n+1 => match list with
+        | List.nil => List.nil
+        | x :: xs => x :: (take xs n)
+
+#eval take [1,2,3,4,5] 5
+
+def products_over_sum {α β γ : Type} (n: α × (β ⊕ γ)) : (α × β) ⊕ (α × γ) :=
+  match n.snd with
+    | Sum.inl b => Sum.inl (n.fst, b)
+    | Sum.inr r => Sum.inr (n.fst, r)
+
+def multication_by_two {α: Type} (n: Bool × α) : α ⊕ α :=
+  match n.fst with
+    | true => Sum.inl n.snd
+    | false => Sum.inr n.snd
