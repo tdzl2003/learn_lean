@@ -82,5 +82,3 @@ def swap(pair : α × β) : β × α :=
 
 #eval swap ({fst:= 1, snd:= 2 : Prod Nat Nat})
 #eval swap (1,2)
-
-def PetName : Type := String ⊕ String
