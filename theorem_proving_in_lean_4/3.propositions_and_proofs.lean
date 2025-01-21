@@ -67,16 +67,48 @@ example : p ∨ (q ∧ r) ↔ (p ∨ q) ∧ (p ∨ r) :=
       )
   ⟩
 
+
 -- other properties
 example : (p → (q → r)) ↔ (p ∧ q → r) :=
   ⟨
-    fun h => sorry,
-    sorry,
+    fun h => fun h1 => h h1.left h1.right,
+    fun h => fun h1 => fun h2 => h (And.intro h1 h2),
   ⟩
-example : ((p ∨ q) → r) ↔ (p → r) ∧ (q → r) := sorry
-example : ¬(p ∨ q) ↔ ¬p ∧ ¬q := sorry
-example : ¬p ∨ ¬q → ¬(p ∧ q) := sorry
-example : ¬(p ∧ ¬p) := sorry
+
+example : ((p ∨ q) → r) ↔ (p → r) ∧ (q → r) :=
+  ⟨
+    fun h => And.intro (fun hp => h (Or.intro_left q hp)) (fun hq => h (Or.intro_right p hq)),
+    fun h => fun h1 => Or.elim h1 h.left h.right
+  ⟩
+
+example : ¬(p ∨ q) ↔ ¬p ∧ ¬q :=
+  ⟨
+    fun h => And.intro
+      (Not.imp h (Or.intro_left q))
+      (Not.imp h (Or.intro_right p)),
+    fun h => Not.intro (λh1 => Or.elim h1
+      (λh2 => h.left h2)
+      (λh2 => h.right h2)
+    )
+  ⟩
+
+example : ¬p ∨ ¬q → ¬(p ∧ q) :=
+    fun h => Or.elim h
+      (fun h1 => Not.imp h1 And.left)
+      (fun h1 => Not.imp h1 And.right)
+
+example : ¬(p ∧ ¬p) :=
+  Not.intro (fun h => Not.elim h.right h.left)
+
+example : ¬(p ∧ ¬p) :=
+  Not.intro (fun h => absurd h.left h.right)
+
+example : ¬(p ∧ ¬p) :=
+  Not.intro (fun h => False.elim (h.right h.left))
+
+example : ¬(p ∧ ¬p) :=
+  Not.intro (fun h => h.right h.left)
+
 example : p ∧ ¬q → ¬(p → q) := sorry
 example : ¬p → (p → q) := sorry
 example : (¬p ∨ q) → (p → q) := sorry
