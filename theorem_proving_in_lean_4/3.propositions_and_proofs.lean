@@ -109,9 +109,30 @@ example : ¬(p ∧ ¬p) :=
 example : ¬(p ∧ ¬p) :=
   Not.intro (fun h => h.right h.left)
 
-example : p ∧ ¬q → ¬(p → q) := sorry
-example : ¬p → (p → q) := sorry
-example : (¬p ∨ q) → (p → q) := sorry
-example : p ∨ False ↔ p := sorry
-example : p ∧ False ↔ False := sorry
-example : (p → q) → (¬q → ¬p) := sorry
+example : p ∧ ¬q → ¬(p → q) :=
+  fun h => Not.intro (fun h1 => h.right (h1 h.left))
+
+example : ¬p → (p → q) :=
+  fun h => fun h1 => Not.elim h h1
+
+example : (¬p ∨ q) → (p → q) :=
+  fun h => Or.elim h
+    (fun h1 => fun h2 => Not.elim h1 h2)
+    (fun h1 => fun _ => h1)
+
+example : p ∨ False ↔ p :=
+  ⟨
+    fun h => Or.elim h
+      (fun h1 => h1)
+      (fun h1 => absurd True.intro (fun _ => h1)),
+    Or.intro_left False
+  ⟩
+
+example : p ∧ False ↔ False :=
+  ⟨
+    fun h => h.right,
+    fun h => absurd True.intro (fun _ => h)
+  ⟩
+
+example : (p → q) → (¬q → ¬p) :=
+    fun h => fun h1 => Not.imp h1 h
