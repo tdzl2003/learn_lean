@@ -78,8 +78,15 @@ namespace Question5
   example : (∃ x : α, r) → r :=
     fun h => h.elim (fun _ => fun hr => hr)
 
-  example (a : α) : r → (∃ x : α, r) := sorry
-  example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r := sorry
+  example (a : α) : r → (∃ x : α, r) :=
+    fun hr => Exists.intro a hr
+
+  example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r :=
+    ⟨
+      fun h1 => And.intro (sorry) (sorry),
+      sorry
+    ⟩
+
   example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) := sorry
 
   example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := sorry
