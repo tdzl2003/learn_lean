@@ -83,18 +83,92 @@ namespace Question5
 
   example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r :=
     ⟨
-      fun h1 => And.intro (sorry) (sorry),
-      sorry
+      fun h1 =>
+        And.intro (h1.elim (fun a => fun hx => Exists.intro a hx.left)) (h1.choose_spec.right),
+      fun h1 => h1.left.elim (fun a => fun hx => Exists.intro a (And.intro hx h1.right))
     ⟩
 
-  example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) := sorry
+  example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) :=
+    ⟨
+      fun h1 =>
+        Or.elim (em (∃ x, p x))
+          Or.inl
+          (fun hn1 => Or.inr (h1.elim
+            (fun x => fun h2 => h2.elim
+              (fun h3 => absurd (Exists.intro x h3) hn1)
+              (fun h3 => Exists.intro x h3)
+            )
+          )
+          )
+        ,
+      fun h1 => h1.elim
+        (fun h1l => h1l.elim (
+          fun x => fun h2 => Exists.intro x (Or.inl h2)
+        ))
+        (fun h1l => h1l.elim (
+          fun x => fun h2 => Exists.intro x (Or.inr h2)
+        ))
+    ⟩
 
-  example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := sorry
-  example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) := sorry
-  example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) := sorry
-  example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) := sorry
+  example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
+    ⟨
+      fun h1 => byContradiction (
+        fun hnn2 =>
+          have h2 := (not_not.mp) hnn2
+          h2.elim (
+            fun x => fun hpx => absurd (h1 x) hpx
+          )
+      ),
+      fun hn2 => fun x => Or.elim (em (p x))
+        id
+        (fun hnp => absurd (Exists.intro x hnp) hn2)
+    ⟩
+
+  example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
+    ⟨
+      fun h1 => byContradiction (
+        fun hnn2 =>
+          have h2 := not_not.mp hnn2
+          h1.elim (
+            fun x => fun hpx => absurd hpx (h2 x)
+          )
+      ),
+      fun hn2 => not_not.mp (Not.imp hn2 (
+        fun hn1 => fun x => Or.elim (em (p x))
+          (fun hp => absurd (Exists.intro x hp) hn1)
+          id
+      ))
+    ⟩
+
+  example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
+    ⟨ not_forall_not.mpr, not_forall_not.mp ⟩ -- 从decidable_of_iff 和 上一个定理 推导出来
+
+example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
+  ⟨
+    fun hn1 => fun x => Or.elim (em (p x))
+      (fun hpx => absurd (Exists.intro x hpx) hn1)
+      id,
+    fun h2 => Or.elim (em (∃ x, p x))
+      (fun hx => absurd hx.choose_spec (h2 hx.choose))
+      id
+  ⟩
+
+  example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
+    ⟨forall_not_of_not_exists, not_exists_of_forall_not ⟩
+
+  example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
+    ⟨
+      fun hn1 =>  not_not.mp (Not.imp hn1 (
+        fun h2 => fun x => Or.elim (em (p x))
+          id
+          (fun npx => absurd (Exists.intro x npx) h2)
+      )),
+      fun h2 => Not.intro (
+        fun h1 => absurd (h1 h2.choose) h2.choose_spec
+      )
+    ⟩
 
   example : (∀ x, p x → r) ↔ (∃ x, p x) → r := sorry
   example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := sorry
   example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := sorry
-end namespace
+end Question5
