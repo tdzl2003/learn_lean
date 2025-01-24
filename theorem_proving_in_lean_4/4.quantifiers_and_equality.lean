@@ -168,7 +168,41 @@ example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
       )
     ⟩
 
-  example : (∀ x, p x → r) ↔ (∃ x, p x) → r := sorry
-  example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := sorry
-  example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := sorry
+  example : (∀ x, p x → r) ↔ (∃ x, p x) → r :=
+    ⟨
+      fun h1 => fun h2 => h1 h2.choose h2.choose_spec,
+      fun h2 => fun x => fun hpx => Or.elim (em (∃ x, p x))
+        (fun h1 => h2 h1)
+        (fun hn3 => absurd (Exists.intro x hpx) hn3)
+    ⟩
+
+  example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r :=
+    ⟨
+      fun h1 => fun h2 => h1.choose_spec (h2 h1.choose),
+      fun h2 => Or.elim (em (∀ x, p x))
+        (fun h3 => Exists.intro a (fun _ => h2 h3))
+        (fun nh3 => not_not.mp (Not.imp nh3 (
+          fun nh1 =>
+            absurd
+            (
+              fun x => Or.elim (em (p x))
+              id
+              (fun nhpx => absurd (Exists.intro x (fun hpx => absurd hpx nhpx )) nh1)
+            )
+            nh3
+        )))
+    ⟩
+
+  example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) :=
+    ⟨
+      fun h1 => fun r => Exists.intro h1.choose (h1.choose_spec r),
+      fun h2 => Or.elim (em r)
+        (
+          fun hr => (
+            have h3 := h2 hr
+            Exists.intro h3.choose (fun _ => h3.choose_spec)
+          )
+        )
+        (fun hnr => Exists.intro a (fun hr => absurd hr hnr))
+    ⟩
 end Question5
