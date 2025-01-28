@@ -43,19 +43,22 @@ end define
 
 
 section test
-  def ModK6 := ModK (k:=6) (hk:=by simp)
-  def ModK6.mk := ModK.mk (k:=6) (hk:=by simp)
+  def Mod6 := ModK (k:=6) (hk:=by simp)
+  def mk := ModK.mk (k:=6) (hk:=by simp)
 
-  def ModK6._0 := ModK6.mk 0 (ok:=by simp)
-  def ModK6._1 := ModK6.mk 1 (ok:=by simp)
-  def ModK6._2 := ModK6.mk 2 (ok:=by simp)
-  def ModK6._3 := ModK6.mk 3 (ok:=by simp)
-  def ModK6._4 := ModK6.mk 4 (ok:=by simp)
-  def ModK6._5 := ModK6.mk 5 (ok:=by simp)
-
-  open ModK6
+  def _0 := mk 0 (ok:=by simp)
+  def _1 := mk 1 (ok:=by simp)
+  def _2 := mk 2 (ok:=by simp)
+  def _3 := mk 3 (ok:=by simp)
+  def _4 := mk 4 (ok:=by simp)
+  def _5 := mk 5 (ok:=by simp)
 
   #eval _3 + _5
+
+  example : _3+_5 = _5+_3 := by simp [ModK.add_comm (k:=6)]
+
+  example : ∀(a b: ModK (k:=6) (hk:=gt)), a+b=b+a := by simp [ModK.add_comm (k:=6)]
+
 end test
 
 
