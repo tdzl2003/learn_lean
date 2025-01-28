@@ -43,7 +43,7 @@ end define
 
 
 section test
-  def Mod6 := ModK (k:=6) (hk:=by simp)
+  abbrev Mod6 := ModK (k:=6) (hk:=by simp)
   def mk := ModK.mk (k:=6) (hk:=by simp)
 
   def _0 := mk 0 (ok:=by simp)
@@ -57,7 +57,7 @@ section test
 
   example : _3+_5 = _5+_3 := by simp [ModK.add_comm (k:=6)]
 
-  example : ∀(a b: ModK (k:=6) (hk:=gt)), a+b=b+a := by simp [ModK.add_comm (k:=6)]
+  example : ∀(a b: Mod6), a+b=b+a := by simp [ModK.add_comm (k:=6)]
 
 end test
 
