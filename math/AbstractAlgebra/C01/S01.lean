@@ -1,12 +1,14 @@
 -- 1.0 预备知识
 import Mathlib.Tactic
 
-open Function
-open Set
 
-variable {α β : Type*}
+open Classical
+open Function
+
+variable {α β : Type*} [Nonempty α]
 
 -- 习题1：设X和Y是两个集合
+-- 然而后续证明其实不必讨论X，和Y，只需要设α'=↑X β'=↑Y即可
 variable {X: Set α}
 variable {Y: Set β}
 
@@ -14,28 +16,42 @@ variable {Y: Set β}
 variable (f: α → β)
 variable (g: β → α)
 
--- f是X上的单射
-#check X.InjOn
+-- 参考这个实现：
+#check Function.HasLeftInverse.injective
+#check Function.Injective.hasLeftInverse
 
--- g是f的左逆
-#check X.LeftInvOn g f
+noncomputable def inv_fun (f : α → β) : β → α :=
+  fun y ↦ if h: ∃ x, f x = y then h.choose else Classical.arbitrary α
 
--- f存在左逆 ↔ f是单射
-theorem injective_of_left_inv: ((∃ g, X.LeftInvOn g f) ↔ X.InjOn f) := by
+-- 习题1.1 证明 f存在左逆 ↔ f是单射
+theorem injective_of_left_inv: (HasLeftInverse f ↔ Injective f) := by
   apply Iff.intro
   {
     -- 证明f存在左逆 表示f是单射
     intro h
     let ⟨g, hg⟩ := h
-    intro x hx y hy h2
+    intro x y h2
     have h3: g (f x) = g (f y) := by
       simp [h2]
-    simp [hg hx, hg hy] at h3
+    simp [hg x, hg y] at h3
     exact h3
   }
   {
     -- 证明f是单射 表示f存在左逆
     intro h
-    let Y' := f '' X
-    sorry
+    let g := inv_fun f
+    have h2: LeftInverse g f := by
+      intro x
+      let y := f x
+      have h3: ∃ a, f a = y := by
+        exact Exists.intro x rfl
+      have h4: f (inv_fun f y) = y := by
+        simp [inv_fun, dif_pos h3, h3.choose_spec]
+      exact h h4
+    exact Exists.intro g h2
   }
+
+theorem surjective_of_right_inv: (HasRightInverse f ↔ Surjective f) := by
+  apply Iff.intro
+  sorry
+  sorry
