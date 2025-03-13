@@ -8,3 +8,5 @@
 * [The Mechanics of Proof](https://hrmacbeth.github.io/math2001/)：怎么把定理写的安全，严密……？现在还不太理解这本书的目的，刷完前面的再来看
 * [Lean Language Reference](https://lean-lang.org/doc/reference/latest): 参考手册，备查，不直接刷 —— 用来找了一些关键词的定义和意思，有些关键词在前面的书里没有解释或解释的不透彻
 * [Documentation Overview](https://lean-lang.org/lean4/doc/) 和 [Learning Lean 4](https://leanprover-community.github.io/learn.html): 资源索引，备查
+
+之前的书有些内容跳着刷了一遍，所以没有做完所有的练习。有空的时候我还是希望能继续补完`Mathematics in Lean`的习题，但是我现在在刷[《抽象代数》](./math/AbstractAlgebra/)，试图形式化实现所有的定理和练习，感觉这样更有挑战一些，也更容易找到知识的遗漏
