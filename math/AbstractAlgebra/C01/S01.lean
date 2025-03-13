@@ -108,16 +108,21 @@ theorem surjective_of_right_inv[Nonempty α]: (HasRightInverse f ↔ Surjective 
     intro h
     -- 构造g为f的反函数
     let g := inv_fun f
+    have : g = inv_fun f := rfl
     -- 证明g是f的右逆，即证明 对任意的y 有 f(g(y)) = y
     have h2: RightInverse g f := by
       -- 对任意的y
       intro y
       -- 设 x = g(y)
       let x := g y
-      -- 我们要证明 f(g(y)) = y
-      have h3: f (inv_fun f y) = y := by
-        -- 根据反函数的定义，因为g(y)是一个满足f(a)=y的a，所以f(g(y)) = y
-        simp [inv_fun, h y, (h y).choose_spec]
+      have : x = g y := rfl
+      -- 我们要证明 f(x) = y
+      have h3: f x = y := by
+        -- 因为f是满射，所以对任意的y都存在a满足f(a) = y，
+        have : ∃ a, f a = y := by
+          simp [h y]
+        -- 因此根据反函数的定义，x满足f(x)=y
+        simp [*, inv_fun, (h y).choose_spec]
       -- 因此得证
       exact h3
     -- 我们已经成功构造右逆，所以可以当做存在性的证明
