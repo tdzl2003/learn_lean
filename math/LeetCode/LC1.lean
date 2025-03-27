@@ -39,47 +39,10 @@ def Solution1: Nat × Nat := Id.run do
 #eval Solution1 [3,2,4].toArray 6
 #eval Solution1 [3,3].toArray 6
 
+#check Option.isSome
+
 -- 解法1的正确性证明
 theorem solution1_is_right(hHasAnswer: HasAnswer nums target) : IsAnswer nums target <| Solution1 nums target := by
-  conv =>
-    arg 3
-    simp [Solution1, Id.run]
-  split
-  {
-    -- 无解分支，通过和有解推出矛盾证明
-    rename_i x heq
-    sorry
-  }
-  {
-    -- 有解分支，证明解的正确性
-    rename_i x ans heq
-    sorry
-  }
-
-structure AnswerWithProof where
-  ans: Nat × Nat
-  proof: HasAnswer nums target -> IsAnswer nums target ans
-
-
--- 带有证明逻辑的Solution1，很难证明其和Solution1的等价性，但可以直接使用它得到一个带证明的实现
-def Solution1_1_with_proof: AnswerWithProof nums target := Id.run do
-  for a in Array.finRange nums.size do
-    for b in Array.finRange nums.size do
-      if h: a<b ∧ nums[a.val]+nums[b.val] = target then
-        return AnswerWithProof.mk (a.val, b.val) (by
-          {
-            intro hHasAnswer
-            simp [IsAnswer]
-            simp [h.left]
-            have x: a.val < nums.size∧b.val < nums.size := ⟨a.isLt, b.isLt⟩
-            exact h.right
-          })
-  -- 无解情形的证明：需证明和有解矛盾，这个证明仍然涉及对for的拆解，比较困难
-  return AnswerWithProof.mk (0,0) (by sorry)
-
-def Solution1_1: ℕ×ℕ :=
-    (Solution1_1_with_proof nums target).ans
-
-
-theorem Solution1_1_is_right(hHasAnswer: HasAnswer nums target) : IsAnswer nums target <| Solution1_1 nums target := by
-  exact (Solution1_1_with_proof nums target).proof hHasAnswer
+  simp [Solution1, Id.run]
+  simp [Array.forIn_eq_foldlM]
+  simp [Array.foldlM_toList]
