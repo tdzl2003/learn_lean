@@ -250,3 +250,33 @@ example : ∀ γ: ℂ, γ • ![2-3*I, 5+4*I, -6+7*I] ≠  ![12-5*I, 7+22*I, -32
   rw [hcalc] at h2
   rw [Complex.mk.injEq] at h2
   norm_num at h2
+
+-- 习题1A.11
+example : ∀ x y z : Vec 𝔽 n, (x+y)+z=x+(y+z) := by
+  intro x y z
+  funext i
+  simp [add_assoc]
+
+-- 习题1A.12
+example : ∀ x : Vec 𝔽 n, ∀ a b : 𝔽, (a*b) • x = a • (b • x) := by
+  intro x a b
+  funext i
+  simp [mul_assoc]
+
+-- 习题1A.13
+example : ∀ x : Vec 𝔽 n, 1 • x = x := by
+  intro x
+  funext i
+  simp
+
+-- 习题1A.14
+example : ∀ γ : 𝔽, ∀ x y : Vec 𝔽 n, γ • (x+y) = γ • x + γ • y := by
+  intro x a b
+  funext i
+  simp [left_distrib]
+
+-- 习题1A.15
+example : ∀ a b : 𝔽 , ∀ x : Vec 𝔽 n, (a + b) • x = a • x + b • x := by
+  intro a b x
+  funext i
+  simp [right_distrib]
